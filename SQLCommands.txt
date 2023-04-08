@@ -1,0 +1,76 @@
+Create database TestDB;
+
+CREATE TABLE Flights
+(
+    flight_number  INT PRIMARY KEY,
+    origin         VARCHAR(50) NOT NULL,
+    destination    VARCHAR(50) NOT NULL,
+    departure_time date        NOT NULL,
+    arrival_time   date        NOT NULL
+);
+
+CREATE TABLE Passengers
+(
+    passenger_id INT PRIMARY KEY,
+    name         VARCHAR(50) NOT NULL,
+    email        VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL
+);
+
+CREATE TABLE Bookings
+(
+    booking_id    INT PRIMARY KEY,
+    flight_number INT   NOT NULL,
+    passenger_id  INT   NOT NULL,
+    booking_date  date  NOT NULL,
+    cost          money NOT NULL,
+    FOREIGN KEY (flight_number) REFERENCES Flights (flight_number),
+    FOREIGN KEY (passenger_id) REFERENCES Passengers (passenger_id)
+);
+
+
+
+select avg(cost)
+from bookings;
+
+select origin, count(flight_number)
+from flights
+group by origin;
+
+
+select origin, count(flight_number)
+from flights
+group by origin;
+
+
+select origin, count(passenger_id)
+from bookings
+         inner join Flights F on Bookings.flight_number = F.flight_number
+group by origin;
+
+
+select origin, avg(cost)
+from Bookings
+         inner join Flights F on F.flight_number = Bookings.flight_number
+group by origin;
+
+
+select origin, count(passenger_id)
+from bookings
+         inner join flights f on bookings.flight_number = f.flight_number
+group by origin
+having avg(cost) < 200;
+
+
+select extract(month from booking_date) as month, sum(cost)
+from bookings
+group by extract(month from booking_date)
+order by extract(month from booking_date);
+
+
+select destination, count(passenger_id)
+from Flights
+         inner join Bookings B on Flights.flight_number = B.flight_number
+group by destination
+order by count(passenger_id) desc
+limit 10;
